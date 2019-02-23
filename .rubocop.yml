@@ -1,0 +1,132 @@
+---
+AllCops:
+  Exclude:
+    - db/schema.rb
+  TargetRubyVersion: 2.5
+Layout/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+Layout/ClassStructure:
+  Enabled: true
+Layout/DotPosition:
+  EnforcedStyle: trailing
+Layout/InitialIndentation:
+  Enabled: false
+Layout/IndentArray:
+  EnforcedStyle: "consistent"
+Layout/IndentHash:
+  EnforcedStyle: "consistent"
+Layout/IndentHeredoc:
+  Enabled: false
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+Layout/SpaceInLambdaLiteral:
+  Enabled: false
+Layout/SpaceInsideStringInterpolation:
+  Enabled: false
+Lint/AssignmentInCondition:
+  Enabled: false
+Lint/HandleExceptions:
+  Enabled: false
+Lint/RequireParentheses:
+  Enabled: false
+Metrics/AbcSize:
+  Max: 32
+Metrics/BlockLength:
+  ExcludedMethods:
+    - describe
+    - context
+    - it
+    - colored
+Metrics/ClassLength:
+  Enabled: false
+Metrics/LineLength:
+  Max: 80
+  IgnoredPatterns:
+    - "^\\s*describe"
+    - "^\\s*context"
+    - "^\\s*it"
+Metrics/MethodLength:
+  Enabled: false
+Metrics/ModuleLength:
+  Enabled: false
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+Naming/MemoizedInstanceVariableName:
+  EnforcedStyleForLeadingUnderscores: required
+Naming/PredicateName:
+  NamePrefixBlacklist:
+    - is_
+  Exclude:
+    - spec/**/*
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
+Style/Alias:
+  Enabled: false
+Style/BracesAroundHashParameters:
+  EnforcedStyle: context_dependent
+Style/CollectionMethods:
+  Enabled: true
+Style/Documentation:
+  Enabled: false
+Style/EachWithObject:
+  Enabled: false
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+Style/FormatString:
+  EnforcedStyle: percent
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/GuardClause:
+  Enabled: false
+Style/IfUnlessModifier:
+  Enabled: false
+Style/Lambda:
+  Enabled: false
+Style/LineEndConcatenation:
+  Enabled: false
+Style/MethodCalledOnDoEndBlock:
+  Enabled: true
+Style/MultilineBlockChain:
+  Enabled: false
+Style/NegatedIf:
+  Enabled: false
+Style/NegatedWhile:
+  Enabled: false
+Style/OneLineConditional:
+  Enabled: false
+Style/PercentLiteralDelimiters:
+  Enabled: false
+Style/PreferredHashMethods:
+  Enabled: false
+Style/RaiseArgs:
+  Enabled: false
+Style/SafeNavigation:
+  Enabled: false
+Style/Send:
+  Enabled: true
+Style/SignalException:
+  Enabled: false
+Style/SpecialGlobalVars:
+  Enabled: false
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+Style/StringMethods:
+  Enabled: true
+Style/SymbolArray:
+  Enabled: false
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+Style/UnneededCondition:
+  Enabled: false
+Style/WhileUntilModifier:
+  Enabled: false
+Style/WordArray:
+  Enabled: false
