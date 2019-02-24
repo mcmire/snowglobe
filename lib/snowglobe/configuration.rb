@@ -6,6 +6,8 @@ module Snowglobe
 
     def initialize
       self.temporary_directory = Pathname.new("/tmp/snowglobe")
+      @project_name = nil
+      @database_name = nil
     end
 
     def project_name
