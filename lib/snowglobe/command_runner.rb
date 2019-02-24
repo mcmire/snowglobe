@@ -1,58 +1,64 @@
+require "forwardable"
 require "timeout"
 require "shellwords"
 
 module Snowglobe
   class CommandRunner
+    extend Forwardable
+
     TimeoutError = Class.new(StandardError)
 
-    def self.run(*args)
-      new(*args).tap do |runner|
-        yield runner
-        runner.call
-      end
+    def self.run(*args, **options, &block)
+      new(*args, **options, &block).tap(&:call)
     end
 
-    def self.run!(*args)
-      run(*args) do |runner|
-        runner.run_successfully = true
-        yield runner if block_given?
-      end
+    def self.run!(*args, **options, &block)
+      run(*args, run_successfully: true, **options, &block)
     end
 
     attr_reader :status, :options, :env
     attr_accessor :command_prefix, :run_quickly, :run_successfully, :retries,
       :timeout
 
-    def initialize(*args)
+    def initialize(
+      *args,
+      env: {},
+      directory: Dir.pwd,
+      run_successfully: false,
+      **options
+    )
       @reader, @writer = IO.pipe
-      options = (args.last.is_a?(Hash) ? args.pop : {})
+      @options = options.merge(err: [:child, :out], out: writer)
+
       @args = args
-      @options = options.merge(
-        err: [:child, :out],
-        out: writer,
-      )
-      @env = extract_env_from(@options)
+      @env = normalize_env(env)
+      self.directory = directory
+      @run_successfully = run_successfully
 
       @wrapper = ->(block) { block.call }
       @command_prefix = ""
-      self.directory = Dir.pwd
       @run_quickly = false
-      @run_successfully = false
       @retries = 1
       @num_times_run = 0
       @timeout = 20
+
+      yield self if block_given?
+    end
+
+    def directory
+      options[:chdir]
+    end
+
+    def directory=(directory)
+      if directory.nil?
+        raise ArgumentError, "Must provide a directory"
+      end
+
+      options[:chdir] = directory
     end
 
     def around_command(&block)
       @wrapper = block
-    end
-
-    def directory
-      @options[:chdir]
-    end
-
-    def directory=(directory)
-      @options[:chdir] = directory || Dir.pwd
     end
 
     def formatted_command
@@ -100,7 +106,7 @@ module Snowglobe
       new_lines.join("\n")
     end
 
-    delegate :success?, to: :status
+    def_delegators :status, :success?
 
     def exit_status
       status.exitstatus
@@ -128,10 +134,9 @@ Output:
 
     private
 
-    def extract_env_from(options)
-      options.delete(:env) { {} }.reduce({}) do |hash, (key, value)|
-        hash[key.to_s] = value
-        hash
+    def normalize_env(env)
+      env.reduce({}) do |hash, (key, value)|
+        hash.merge(key.to_s => value)
       end
     end
 

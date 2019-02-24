@@ -4,24 +4,10 @@ require_relative "gem_version"
 
 module Snowglobe
   class Bundle
-    def initialize
+    def initialize(fs:, command_runner:)
+      @fs = fs
+      @command_runner = command_runner
       @already_updating = false
-      @fs = Filesystem.new
-    end
-
-    def updating
-      if already_updating?
-        yield self
-        return
-      end
-
-      @already_updating = true
-
-      yield self
-
-      @already_updating = false
-
-      install_gems
     end
 
     def add_gem(gem, *args)
@@ -39,8 +25,23 @@ module Snowglobe
       end
     end
 
+    def updating
+      if already_updating?
+        yield self
+        return
+      end
+
+      @already_updating = true
+
+      yield self
+
+      @already_updating = false
+
+      install_gems
+    end
+
     def install_gems
-      CommandRunner.run!("bundle install --local") do |runner|
+      command_runner.run!("bundle install --local") do |runner|
         runner.retries = 5
       end
     end
@@ -55,11 +56,9 @@ module Snowglobe
       end
     end
 
-    protected
-
-    attr_reader :fs
-
     private
+
+    attr_reader :fs, :command_runner
 
     def already_updating?
       @already_updating

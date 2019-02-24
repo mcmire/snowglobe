@@ -20,6 +20,10 @@ module Snowglobe
       end
     end
 
+    def database_name
+      @database_name || project_name
+    end
+
     def update!
       yield self
     end
