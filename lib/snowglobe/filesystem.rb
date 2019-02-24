@@ -58,7 +58,7 @@ module Snowglobe
     def comment_lines_matching(path, pattern)
       transform(path) do |lines|
         lines.map do |line|
-          if line&.match?(pattern)
+          if line && line =~ pattern
             "###{line}"
           else
             line
