@@ -24,23 +24,42 @@ module Snowglobe
       project_directory.join(path)
     end
 
-    def open(path, *args, &block)
-      wrap(path).open(*args, &block)
+    def open_file(path, *args, &block)
+      wrap_file(path).open(*args, &block)
     end
 
-    def read(path)
-      wrap(path).read
+    def comment_lines_matching_in_file(path, pattern)
+      transform_file(path) do |lines|
+        lines.map do |line|
+          if line && line =~ pattern
+            "###{line}"
+          else
+            line
+          end
+        end
+      end
     end
 
-    def write(path, content)
-      pathname = wrap(path)
+    def transform_file(path)
+      content = read_file(path)
+      lines = content.split(/\n/)
+      transformed_lines = yield lines
+      write_file(path, transformed_lines.join("\n") + "\n")
+    end
+
+    def read_file(path)
+      wrap_file(path).read
+    end
+
+    def write_file(path, content)
+      pathname = wrap_file(path)
       create_parents_of(pathname)
       pathname.open("w") { |f| f.write(content) }
       pathname
     end
 
     def append_to_file(path, content, _options = {})
-      pathname = wrap(path)
+      pathname = wrap_file(path)
       create_parents_of(pathname)
       pathname.open("a") { |f| f.puts(content + "\n") }
     end
@@ -55,32 +74,13 @@ module Snowglobe
       end
     end
 
-    def comment_lines_matching(path, pattern)
-      transform(path) do |lines|
-        lines.map do |line|
-          if line && line =~ pattern
-            "###{line}"
-          else
-            line
-          end
-        end
-      end
-    end
-
-    def transform(path)
-      content = read(path)
-      lines = content.split(/\n/)
-      transformed_lines = yield lines
-      write(path, transformed_lines.join("\n") + "\n")
-    end
-
     private
 
     def root_directory
       Snowglobe.configuration.temporary_directory
     end
 
-    def wrap(path)
+    def wrap_file(path)
       if path.is_a?(Pathname)
         path
       else

@@ -21,7 +21,7 @@ module Snowglobe
 
     def remove_gem(gem)
       updating do
-        fs.comment_lines_matching("Gemfile", /^[ ]*gem ("|')#{gem}\1/)
+        fs.comment_lines_matching_in_file("Gemfile", /^[ ]*gem ("|')#{gem}\1/)
       end
     end
 

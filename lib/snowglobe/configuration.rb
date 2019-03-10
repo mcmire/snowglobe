@@ -12,7 +12,7 @@ module Snowglobe
 
     def project_name
       if @project_name
-        @project_name
+        "#{@project_name}-test-app"
       else
         raise NotConfiguredError.new(<<~EXAMPLE)
           Snowglobe.configure do |config|

@@ -4,6 +4,14 @@ module Snowglobe
       @version = Gem::Version.new(version.to_s + "")
     end
 
+    def major
+      segments[0]
+    end
+
+    def minor
+      segments[1]
+    end
+
     def <(other)
       compare?(:<, other)
     end
@@ -32,11 +40,13 @@ module Snowglobe
       version.to_s
     end
 
-    protected
+    private
 
     attr_reader :version
 
-    private
+    def segments
+      @_segments ||= version.to_s.split(".")
+    end
 
     def compare?(op, other)
       Gem::Requirement.new("#{op} #{other}").satisfied_by?(version)
