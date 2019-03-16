@@ -31,15 +31,6 @@ module Snowglobe
       run(*args)
     end
 
-    # def run_within_bundle!(*args, **options, &block)
-      # run_within_bundle(
-        # *args,
-        # **options,
-        # run_successfully: true,
-        # &block
-      # )
-    # end
-
     def run_within_bundle(*args)
       run(*args) do |runner|
         runner.command_prefix = "bundle exec"
