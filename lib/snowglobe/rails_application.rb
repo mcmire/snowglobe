@@ -26,15 +26,9 @@ module Snowglobe
       generate
 
       fs.within_project do
-        # install_gems
         remove_unwanted_gems
       end
     end
-
-    # def load
-    # load_environment
-    # run_migrations
-    # end
 
     def evaluate!(code)
       command_runner = nil
@@ -56,34 +50,13 @@ module Snowglobe
       command_runner.output
     end
 
+    def run_command(*args, &block)
+      command_runner.run(*args, &block)
+    end
+
     def run_command!(*args, &block)
       command_runner.run!(*args, &block)
     end
-
-    # def gemfile_path
-    # fs.find("Gemfile")
-    # end
-
-    # def temp_views_directory
-    # fs.find_in_project("tmp/views")
-    # end
-
-    # def create_temp_view(path, contents)
-    # full_path = temp_view_path_for(path)
-    # full_path.dirname.mkpath
-    # full_path.open("w") { |f| f.write(contents) }
-    # end
-
-    # def delete_temp_views
-    # if temp_views_directory.exist?
-    # temp_views_directory.rmtree
-    # end
-    # end
-
-    # def draw_routes(&block)
-    # Rails.application.routes.draw(&block)
-    # Rails.application.routes
-    # end
 
     def migration_class_name
       if rails_version > 5
@@ -163,24 +136,6 @@ Rails.application.configure do
 end
       TEXT
     end
-
-    # def load_environment
-    # require environment_file_path
-    # end
-
-    # def environment_file_path
-    # fs.find_in_project("config/environment")
-    # end
-
-    # def run_migrations
-    # fs.within_project do
-    # run_command! "bundle exec rake db:drop db:create db:migrate"
-    # end
-    # end
-
-    # def install_gems
-    # bundle.install_gems
-    # end
 
     def remove_unwanted_gems
       bundle.updating do
