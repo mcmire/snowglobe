@@ -88,6 +88,7 @@ module Snowglobe
       fix_available_locales_warning
       remove_bootsnap
       write_database_configuration
+      configure_tests_to_run_in_sorted_order
 
       if bundle.version_of("rails") >= 5
         add_initializer_for_time_zone_aware_types
@@ -125,6 +126,14 @@ end
     def write_database_configuration
       fs.open_file("config/database.yml", "w") do |f|
         YAML.dump(database.config.to_hash, f)
+      end
+    end
+
+    def configure_tests_to_run_in_sorted_order
+      fs.transform_file("config/environments/test.rb") do |lines|
+        lines.insert(-2, <<-CONTENT)
+  config.active_support.test_order = :sorted
+        CONTENT
       end
     end
 
