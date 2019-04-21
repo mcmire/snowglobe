@@ -67,13 +67,13 @@ module Snowglobe
       end
     end
 
-    private
-
-    attr_reader :fs, :command_runner, :bundle, :database
-
     def rails_version
       @_rails_version ||= bundle.version_of("rails")
     end
+
+    private
+
+    attr_reader :fs, :command_runner, :bundle, :database
 
     def migrations_directory
       fs.find_in_project("db/migrate")
