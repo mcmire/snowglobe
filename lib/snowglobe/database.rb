@@ -2,14 +2,16 @@ require_relative "database_configuration"
 
 module Snowglobe
   class Database
-    ADAPTER_NAME = ENV.fetch("DATABASE_ADAPTER", "sqlite3").to_sym
+    def self.adapter_name
+      ENV.fetch("DATABASE_ADAPTER", "sqlite3").to_sym
+    end
 
     attr_reader :config
 
     def initialize
       @config = DatabaseConfiguration.for(
         Snowglobe.configuration.database_name,
-        ADAPTER_NAME,
+        self.class.adapter_name
       )
     end
 

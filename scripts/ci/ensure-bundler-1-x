@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -xeuo pipefail
+
+if command -v bundle &>/dev/null && bundle -v &>/dev/null && ! [[ $(bundle -v | sed -e 's/^Bundler version //') =~ ^1\. ]]; then
+  gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler
+fi
+
+if ! command -v bundle &>/dev/null || ! bundle -v &>/dev/null; then
+  gem install bundler -v '< 2' --no-document
+fi

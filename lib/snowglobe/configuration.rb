@@ -1,6 +1,5 @@
 module Snowglobe
   class Configuration
-    attr_accessor :root_directory
     attr_accessor :temporary_directory
     attr_writer :project_name
 

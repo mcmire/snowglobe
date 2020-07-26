@@ -1,80 +1,155 @@
-require "forwardable"
-require "timeout"
+require "childprocess"
+
+require "English"
 require "shellwords"
+require "timeout"
+
+require_relative "output_helpers"
 
 module Snowglobe
   class CommandRunner
-    extend Forwardable
-
-    TimeoutError = Class.new(StandardError)
-
-    def self.run(*args, **options, &block)
-      new(*args, **options, &block).tap(&:call)
-    end
-
-    def self.run!(*args, **options, &block)
-      run(*args, run_successfully: true, **options, &block)
-    end
-
-    attr_reader :status, :options, :env
-    attr_accessor :command_prefix, :run_quickly, :run_successfully, :retries,
-      :timeout
-
-    def initialize(
-      *args,
-      env: {},
-      directory: Dir.pwd,
-      run_successfully: false,
-      **options
-    )
-      @reader, @writer = IO.pipe
-      @options = options.merge(err: [:child, :out], out: writer)
-
-      @args = args
-      @env = normalize_env(env)
-      self.directory = directory
-      @run_successfully = run_successfully
-
-      @wrapper = ->(block) { block.call }
-      @command_prefix = ""
-      @run_quickly = false
-      @retries = 1
-      @num_times_run = 0
-      @timeout = 20
-
-      yield self if block_given?
-    end
-
-    def directory
-      options[:chdir]
-    end
-
-    def directory=(directory)
-      if directory.nil?
-        raise ArgumentError, "Must provide a directory"
+    class CommandFailedError < StandardError
+      def self.create(command:, exit_status:, output:, message: nil)
+        allocate.tap do |error|
+          error.command = command
+          error.exit_status = exit_status
+          error.output = output
+          error.__send__(:initialize, message)
+        end
       end
 
-      options[:chdir] = directory
+      attr_accessor :command, :exit_status, :output
+
+      def initialize(message = nil)
+        super(message || build_message)
+      end
+
+      private
+
+      def build_message
+        message = <<-MESSAGE
+Command #{command.inspect} failed, exiting with status #{exit_status}.
+        MESSAGE
+
+        if output
+          message << <<-MESSAGE
+Output:
+#{
+  Snowglobe::OutputHelpers.divider("START") +
+  output +
+  Snowglobe::OutputHelpers.divider("END")
+}
+          MESSAGE
+        end
+
+        message
+      end
+    end
+
+    class CommandTimedOutError < StandardError
+      def self.create(command:, timeout:, output:, message: nil)
+        allocate.tap do |error|
+          error.command = command
+          error.timeout = timeout
+          error.output = output
+          error.__send__(:initialize, message)
+        end
+      end
+
+      attr_accessor :command, :timeout, :output
+
+      def initialize(message = nil)
+        super(message || build_message)
+      end
+
+      private
+
+      def build_message
+        message = <<-MESSAGE
+Command #{formatted_command.inspect} timed out after #{timeout} seconds.
+        MESSAGE
+
+        if output
+          message << <<-MESSAGE
+Output:
+#{
+  Snowglobe::OutputHelpers.divider("START") +
+  output +
+  Snowglobe::OutputHelpers.divider("END")
+}
+          MESSAGE
+        end
+
+        message
+      end
+    end
+
+    def self.run(*args)
+      new(*args).tap do |runner|
+        yield runner if block_given?
+        runner.run
+      end
+    end
+
+    def self.run!(*args)
+      run(*args) do |runner|
+        runner.run_successfully = true
+        yield runner if block_given?
+      end
+    end
+
+    attr_reader :options, :env
+    attr_accessor :run_quickly, :run_successfully, :retries, :timeout
+
+    def initialize(*args)
+      @reader, @writer = IO.pipe
+      options = (args.last.is_a?(Hash) ? args.pop : {})
+      @args = args
+      @options = options.merge(
+        err: [:child, :out],
+        out: @writer
+      )
+      @env = extract_env_from(@options)
+
+      @process = ChildProcess.build(*command)
+      @env.each do |key, value|
+        @process.environment[key] = value
+      end
+      @process.io.stdout = @process.io.stderr = @writer
+
+      @wrapper = -> (block) { block.call }
+      self.directory = Dir.pwd
+      @run_quickly = false
+      @run_successfully = false
+      @retries = 1
+      @num_times_run = 0
+      @timeout = 10
     end
 
     def around_command(&block)
       @wrapper = block
     end
 
-    def formatted_command
-      [formatted_env, Shellwords.join(command)].
-        reject(&:empty?).
-        join(" ")
+    def directory
+      @options[:chdir]
     end
 
-    def call
-      possibly_retrying do
-        possibly_running_quickly do
-          run_with_debugging
+    def directory=(directory)
+      @options[:chdir] = (directory || Dir.pwd).to_s
+    end
 
-          if run_successfully && !success?
-            fail!
-          end
+    def formatted_command
+      [formatted_env, Shellwords.join(command)]
+        .reject(&:empty?)
+        .join(" ")
+    end
+
+    def run
+      possibly_running_quickly do
+        run_with_debugging
+
+        if run_successfully && !success?
+          fail!
         end
       end
 
@@ -82,7 +157,7 @@ module Snowglobe
     end
 
     def stop
-      unless writer.closed?
+      if !writer.closed?
         writer.close
       end
     end
@@ -90,7 +165,7 @@ module Snowglobe
     def output
       @_output ||= begin
         stop
-        without_colors(reader.read)
+        reader.read
       end
     end
 
@@ -106,18 +181,20 @@ module Snowglobe
       new_lines.join("\n")
     end
 
-    def_delegators :status, :success?
+    def success?
+      exit_status == 0
+    end
 
     def exit_status
-      status.exitstatus
+      process.exit_code
     end
 
     def fail!
-      raise <<-MESSAGE
-Command #{formatted_command.inspect} exited with status #{exit_status}.
-Output:
-#{divider("START") + output + divider("END")}
-      MESSAGE
+      raise CommandFailedError.create(
+        command: formatted_command,
+        exit_status: exit_status,
+        output: output
+      )
     end
 
     def has_output?(expected_output)
@@ -130,34 +207,31 @@ Output:
 
     protected
 
-    attr_reader :args, :reader, :writer, :wrapper
+    attr_reader :args, :reader, :writer, :wrapper, :process
 
     private
 
-    def normalize_env(env)
-      env.reduce({}) do |hash, (key, value)|
+    def extract_env_from(options)
+      options.delete(:env) { {} }.reduce({}) do |hash, (key, value)|
         hash.merge(key.to_s => value)
       end
     end
 
     def command
-      ([command_prefix] + args).flatten.flat_map do |word|
-        Shellwords.split(word)
-      end
+      args.flatten.flat_map { |word| Shellwords.split(word) }
     end
 
     def formatted_env
       env.map { |key, value| "#{key}=#{value.inspect}" }.join(" ")
     end
 
-    def run
-      pid = spawn(env, *command, options)
-      Process.waitpid(pid)
-      @status = $?
+    def run_freely
+      process.start
+      process.wait
     end
 
     def run_with_wrapper
-      wrapper.call(method(:run))
+      wrapper.call(method(:run_freely))
     end
 
     def run_with_debugging
@@ -166,7 +240,12 @@ Output:
 
       run_with_wrapper
 
-      debug { "\n" + divider("START") + output + divider("END") }
+      debug do
+        "\n" +
+          Snowglobe::OutputHelpers.divider("START") +
+          output +
+          Snowglobe::OutputHelpers.divider("END")
+      end
     end
 
     def possibly_running_quickly(&block)
@@ -176,47 +255,15 @@ Output:
         rescue Timeout::Error
           stop
 
-          message =
-            "Command timed out after #{timeout} seconds: " +
-            "#{formatted_command}\n" +
-            "Output:\n" +
-            output
-
-          raise TimeoutError, message
+          raise CommandTimedOutError.create(
+            command: formatted_command,
+            timeout: timeout,
+            output: output
+          )
         end
       else
         yield
       end
-    end
-
-    def possibly_retrying
-      @num_times_run += 1
-      yield
-    rescue StandardError => error
-      debug { "#{error.class}: #{error.message}" }
-
-      if @num_times_run < @retries
-        sleep @num_times_run
-        retry
-      else
-        raise error
-      end
-    end
-
-    def divider(title = "")
-      total_length = 72
-      start_length = 3
-
-      string = ""
-      string << ("-" * start_length)
-      string << title
-      string << "-" * (total_length - start_length - title.length)
-      string << "\n"
-      string
-    end
-
-    def without_colors(string)
-      string.gsub(/\e\[\d+(?:;\d+)?m(.+?)\e\[0m/, '\1')
     end
 
     def debugging_enabled?

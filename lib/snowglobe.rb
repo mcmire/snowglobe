@@ -3,11 +3,15 @@ require_relative "snowglobe/rails_application"
 require_relative "snowglobe/version"
 
 module Snowglobe
-  def self.configure(&block)
-    configuration.update!(&block)
-  end
+  class << self
+    attr_writer :configuration
 
-  def self.configuration
-    @_configuration ||= Configuration.new
+    def configure(&block)
+      configuration.update!(&block)
+    end
+
+    def configuration
+      @configuration ||= Configuration.new
+    end
   end
 end

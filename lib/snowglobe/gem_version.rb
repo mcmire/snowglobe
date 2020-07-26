@@ -21,7 +21,8 @@ module Snowglobe
     end
 
     def ==(other)
-      compare?(:==, other)
+      (other.is_a?(self.class) && version == other.__send__(:version)) ||
+        compare?(:==, other)
     end
 
     def >=(other)

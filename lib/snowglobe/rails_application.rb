@@ -30,34 +30,6 @@ module Snowglobe
       end
     end
 
-    def evaluate!(code)
-      command_runner = nil
-
-      Dir::Tmpname.create(
-        ["", ".rb"],
-        fs.find_in_project("tmp"),
-      ) do |path, _, _, _|
-        tempfile = fs.write_file(path, code)
-
-        command_runner = run_command!(
-          "ruby",
-          tempfile.to_s,
-          err: nil,
-          env: { "RUBYOPT" => "" },
-        )
-      end
-
-      command_runner.output
-    end
-
-    def run_command(*args, &block)
-      command_runner.run(*args, &block)
-    end
-
-    def run_command!(*args, &block)
-      command_runner.run!(*args, &block)
-    end
-
     def migration_class_name
       if rails_version > 5
         number = [rails_version.major, rails_version.minor].join(".").to_f
@@ -85,7 +57,6 @@ module Snowglobe
 
     def generate
       rails_new
-      fix_available_locales_warning
       remove_bootsnap
       write_database_configuration
       configure_tests_to_run_in_sorted_order
@@ -97,20 +68,8 @@ module Snowglobe
 
     def rails_new
       CommandRunner.run!(
-        %W(rails new #{fs.project_directory} --skip-bundle --no-rc),
+        %W(rails new #{fs.project_directory} --skip-bundle --skip-javascript --no-rc),
       )
-    end
-
-    def fix_available_locales_warning
-      # See here for more on this:
-      # http://stackoverflow.com/questions/20361428/rails-i18n-validation-deprecation-warning
-      fs.transform_file("config/application.rb") do |lines|
-        lines.insert(-3, <<-TEXT)
-if I18n.respond_to?(:enforce_available_locales=)
-  I18n.enforce_available_locales = false
-end
-        TEXT
-      end
     end
 
     def remove_bootsnap
@@ -137,6 +96,9 @@ end
       end
     end
 
+    # Rails 5.0 added `time_zone_aware_types`. Make Rails 4.2 apps compatible
+    # with everything that has come after.
+    # See: <https://github.com/rails/rails/pull/15726>
     def add_initializer_for_time_zone_aware_types
       path = "config/initializers/configure_time_zone_aware_types.rb"
       fs.write_file(path, <<-TEXT)
@@ -148,11 +110,20 @@ end
 
     def remove_unwanted_gems
       bundle.updating do
+        bundle.remove_gem "bootsnap"
         bundle.remove_gem "debugger"
         bundle.remove_gem "byebug"
         bundle.add_gem "pry-byebug"
         bundle.remove_gem "web-console"
       end
+    end
+
+    def run_command(*args, &block)
+      command_runner.run(*args, &block)
+    end
+
+    def run_command!(*args, &block)
+      command_runner.run!(*args, &block)
     end
   end
 end

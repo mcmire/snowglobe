@@ -2,20 +2,23 @@
 AllCops:
   Exclude:
     - db/schema.rb
+  NewCops: enable
   TargetRubyVersion: 2.5
-Layout/AlignParameters:
+Layout/ParameterAlignment:
   EnforcedStyle: with_fixed_indentation
 Layout/ClassStructure:
   Enabled: true
+Layout/CommentIndentation:
+  Enabled: false
 Layout/DotPosition:
-  EnforcedStyle: trailing
+  EnforcedStyle: leading
 Layout/InitialIndentation:
   Enabled: false
-Layout/IndentArray:
-  EnforcedStyle: "consistent"
-Layout/IndentHash:
-  EnforcedStyle: "consistent"
-Layout/IndentHeredoc:
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+Layout/HeredocIndentation:
   Enabled: false
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
@@ -23,11 +26,13 @@ Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
 Layout/SpaceInLambdaLiteral:
   Enabled: false
+Layout/SpaceInsideRangeLiteral:
+  Enabled: false
 Layout/SpaceInsideStringInterpolation:
   Enabled: false
 Lint/AssignmentInCondition:
   Enabled: false
-Lint/HandleExceptions:
+Lint/SuppressedException:
   Enabled: false
 Lint/RequireParentheses:
   Enabled: false
@@ -35,17 +40,24 @@ Metrics/AbcSize:
   Max: 32
 Metrics/BlockLength:
   ExcludedMethods:
-    - describe
     - context
+    - define
+    - describe
     - it
-    - colored
+    - shared_context
+    - shared_examples
+    - shared_examples_for
 Metrics/ClassLength:
   Enabled: false
-Metrics/LineLength:
+Metrics/CyclomaticComplexity:
+  Max: 15
+Layout/LineLength:
   Max: 80
   IgnoredPatterns:
-    - "^\\s*describe"
+    - "^\\s*RSpec.describe"
+    - "^\\s*class [\\w:]+ < [\\w:]+"
     - "^\\s*context"
+    - "^\\s*describe"
     - "^\\s*it"
 Metrics/MethodLength:
   Enabled: false
@@ -53,24 +65,34 @@ Metrics/ModuleLength:
   Enabled: false
 Metrics/ParameterLists:
   CountKeywordArgs: false
+Metrics/PerceivedComplexity:
+  Max: 15
+Naming/AccessorMethodName:
+  Enabled: false
+Naming/BinaryOperatorParameterName:
+  Enabled: false
 Naming/MemoizedInstanceVariableName:
   EnforcedStyleForLeadingUnderscores: required
 Naming/PredicateName:
-  NamePrefixBlacklist:
+  ForbiddenPrefixes:
     - is_
   Exclude:
     - spec/**/*
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
+  Enabled: false
+Style/AccessModifierDeclarations:
   Enabled: false
 Style/Alias:
   Enabled: false
-Style/BracesAroundHashParameters:
-  EnforcedStyle: context_dependent
+Style/BlockDelimiters:
+  EnforcedStyle: braces_for_chaining
 Style/CollectionMethods:
   Enabled: true
 Style/Documentation:
   Enabled: false
 Style/EachWithObject:
+  Enabled: false
+Style/EmptyElse:
   Enabled: false
 Style/EmptyMethod:
   EnforcedStyle: expanded
@@ -94,6 +116,8 @@ Style/NegatedIf:
   Enabled: false
 Style/NegatedWhile:
   Enabled: false
+Style/NumericPredicate:
+  Enabled: false
 Style/OneLineConditional:
   Enabled: false
 Style/PercentLiteralDelimiters:
@@ -101,6 +125,8 @@ Style/PercentLiteralDelimiters:
 Style/PreferredHashMethods:
   Enabled: false
 Style/RaiseArgs:
+  Enabled: false
+Style/RedundantRegexpCharacterClass:
   Enabled: false
 Style/SafeNavigation:
   Enabled: false
@@ -119,12 +145,12 @@ Style/StringMethods:
 Style/SymbolArray:
   Enabled: false
 Style/TrailingCommaInArguments:
-  EnforcedStyleForMultiline: comma
+  EnforcedStyleForMultiline: no_comma
 Style/TrailingCommaInArrayLiteral:
-  EnforcedStyleForMultiline: comma
+  EnforcedStyleForMultiline: no_comma
 Style/TrailingCommaInHashLiteral:
-  EnforcedStyleForMultiline: comma
-Style/UnneededCondition:
+  EnforcedStyleForMultiline: no_comma
+Style/RedundantCondition:
   Enabled: false
 Style/WhileUntilModifier:
   Enabled: false
