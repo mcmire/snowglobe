@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+* Use `childprocess` to run commands.
+* Skip installing Webpacker when generating Rails 6 applications.
+* Remove Bootsnap from generated Rails 6 applications.
+* Remove outdated Rails < 4.2 modifications.
+
 ## 0.3.0 - 2019-04-21
 
 ### Features
