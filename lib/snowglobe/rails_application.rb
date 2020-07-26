@@ -31,7 +31,7 @@ module Snowglobe
     end
 
     def migration_class_name
-      if rails_version > 5
+      if rails_version >= 5
         number = [rails_version.major, rails_version.minor].join(".").to_f
         "ActiveRecord::Migration[#{number}]"
       else
@@ -61,7 +61,7 @@ module Snowglobe
       write_database_configuration
       configure_tests_to_run_in_sorted_order
 
-      if bundle.version_of("rails") >= 5
+      if rails_version >= 5
         add_initializer_for_time_zone_aware_types
       end
     end
@@ -96,8 +96,8 @@ module Snowglobe
       end
     end
 
-    # Rails 5.0 added `time_zone_aware_types`. Make Rails 4.2 apps compatible
-    # with everything that has come after.
+    # Rails 5.0 added `time_zone_aware_types`. Make sure the setting is the same
+    # for all apps > 5.
     # See: <https://github.com/rails/rails/pull/15726>
     def add_initializer_for_time_zone_aware_types
       path = "config/initializers/configure_time_zone_aware_types.rb"
