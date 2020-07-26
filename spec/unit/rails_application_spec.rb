@@ -34,7 +34,7 @@ RSpec.describe Snowglobe::RailsApplication do
       expect(app_directory.join("app/javascript").exist?).not_to be(true)
     end
 
-    if rails_version >= 5
+    if rails_version >= "5.2"
       it "removes Bootsnap" do
         expect("Gemfile").to have_commented_out_line_starting_with(
           "gem 'bootsnap'"

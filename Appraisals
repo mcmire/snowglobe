@@ -25,7 +25,7 @@ end
 appraise "rails_4_2" do
   instance_eval(&shared_dependencies)
 
-  gem "rails", "~> 4.2"
+  gem "rails", "4.2.11.3"
   gem "sass-rails", "~> 5.0"
   gem "uglifier", ">= 1.3.0"
   gem "coffee-rails", "~> 4.1.0"
@@ -44,10 +44,10 @@ end
 appraise "rails_5_0" do
   instance_eval(&shared_dependencies)
 
-  gem "rails", "~> 5.0"
+  gem "rails", "5.0.7.2"
   gem "rails-controller-testing", ">= 1.0.1"
   gem "puma", "~> 3.0"
-  gem "sass-rails", "~> 5.0"
+  gem "sass-rails", "5.0.7"
   gem "jquery-rails"
   gem "turbolinks", "~> 5"
   gem "jbuilder", "~> 2.5"
@@ -58,10 +58,10 @@ end
 
 appraise "rails_5_1" do
   instance_eval(&shared_dependencies)
-  gem "rails", "~> 5.1"
+  gem "rails", "5.1.7"
   gem "rails-controller-testing", ">= 1.0.1"
   gem "puma", "~> 3.7"
-  gem "sass-rails", "~> 5.0"
+  gem "sass-rails", "5.0.7"
   gem "turbolinks", "~> 5"
   gem "jbuilder", "~> 2.5"
   gem "bcrypt", "~> 3.1.7"
@@ -74,7 +74,7 @@ end
 appraise "rails_5_2" do
   instance_eval(&shared_dependencies)
 
-  gem "rails", "~> 5.2"
+  gem "rails", "5.2.4.3"
   gem "rails-controller-testing", ">= 1.0.1"
   gem "puma", "~> 3.11"
   gem "bootsnap", ">= 1.1.0", require: false
@@ -93,7 +93,7 @@ if Gem::Requirement.new(">= 2.5.0").satisfied_by?(Gem::Version.new(RUBY_VERSION)
   appraise "rails_6_0" do
     instance_eval(&shared_dependencies)
 
-    gem "rails", "~> 6.0"
+    gem "rails", "6.0.3.2"
     gem "puma", "~> 4.1"
     gem "sass-rails", ">= 6"
     gem "webpacker", "~> 4.0"

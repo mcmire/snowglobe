@@ -218,7 +218,7 @@ Output:
     end
 
     def command
-      args.flatten.flat_map { |word| Shellwords.split(word) }
+      args.flatten.flat_map { |word| Shellwords.split(word.to_s) }
     end
 
     def formatted_env

@@ -57,7 +57,11 @@ module Snowglobe
 
     def generate
       rails_new
-      remove_bootsnap
+
+      if rails_version >= "5.2"
+        remove_bootsnap
+      end
+
       write_database_configuration
       configure_tests_to_run_in_sorted_order
 
@@ -68,7 +72,12 @@ module Snowglobe
 
     def rails_new
       CommandRunner.run!(
-        %W(rails new #{fs.project_directory} --skip-bundle --skip-javascript --no-rc),
+        "rails",
+        "new",
+        fs.project_directory,
+        "--skip-bundle",
+        "--skip-javascript",
+        "--no-rc"
       )
     end
 
@@ -78,7 +87,7 @@ module Snowglobe
       # Zeus anyhow)
       fs.comment_lines_matching_in_file(
         "config/boot.rb",
-        %r{\Arequire 'bootsnap/setup'},
+        %r{\Arequire 'bootsnap/setup'}
       )
     end
 
