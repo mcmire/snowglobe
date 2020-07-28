@@ -41,7 +41,9 @@ module Snowglobe
     end
 
     def install_gems
-      command_runner.run!("bundle install --local") do |runner|
+      command_runner.run_outside_of_bundle!(
+        "bundle install --local"
+      ) do |runner|
         runner.retries = 5
       end
     end
@@ -65,9 +67,9 @@ module Snowglobe
     end
 
     def assemble_gem_line(gem, version, options)
-      formatted_options = options.
-        map { |key, value| "#{key}: #{formatted_value(value)}" }.
-        join(", ")
+      formatted_options = options
+        .map { |key, value| "#{key}: #{formatted_value(value)}" }
+        .join(", ")
 
       line = %(gem '#{gem}')
 

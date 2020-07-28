@@ -6,6 +6,7 @@
 * Skip installing Webpacker when generating Rails 6 applications.
 * Remove Bootsnap from generated Rails 6 applications.
 * Remove outdated Rails < 4.2 modifications.
+* Use cross-platform means of creating a temporary directory.
 
 ## 0.3.0 - 2019-04-21
 

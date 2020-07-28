@@ -4,9 +4,10 @@ Snowglobe::CurrentBundle.instance.assert_appraisal!
 #---
 
 require "pry-byebug"
-require "snowglobe"
 require "rails"
 require "super_diff/rspec"
+
+require "snowglobe"
 
 Dir.glob(File.expand_path("support/**/*.rb", __dir__)).sort.each do |file|
   require file

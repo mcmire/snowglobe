@@ -1,17 +1,17 @@
 module Snowglobe
   class Configuration
     attr_accessor :temporary_directory
-    attr_writer :project_name
+    attr_writer :project_name, :database_name
 
     def initialize
-      self.temporary_directory = Pathname.new("/tmp/snowglobe")
+      self.temporary_directory = Pathname.new(Dir.tmpdir).join("snowglobe")
       @project_name = nil
       @database_name = nil
     end
 
     def project_name
       if @project_name
-        "#{@project_name}-test-app"
+        @project_name
       else
         raise NotConfiguredError.new(<<~EXAMPLE)
           Snowglobe.configure do |config|
