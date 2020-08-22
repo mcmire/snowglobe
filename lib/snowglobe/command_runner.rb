@@ -99,7 +99,13 @@ Output:
     end
 
     attr_reader :options, :env
-    attr_accessor :run_quickly, :run_successfully, :retries, :timeout
+    attr_accessor(
+      :command_prefix,
+      :run_quickly,
+      :run_successfully,
+      :retries,
+      :timeout
+    )
 
     def initialize(*args)
       @reader, @writer = IO.pipe
@@ -118,6 +124,7 @@ Output:
       @process.io.stdout = @process.io.stderr = @writer
 
       @wrapper = -> (block) { block.call }
+      self.command_prefix = ""
       self.directory = Dir.pwd
       @run_quickly = false
       @run_successfully = false
@@ -218,7 +225,9 @@ Output:
     end
 
     def command
-      args.flatten.flat_map { |word| Shellwords.split(word.to_s) }
+      ([command_prefix] + args)
+        .flatten
+        .flat_map { |word| Shellwords.split(word.to_s) }
     end
 
     def formatted_env
