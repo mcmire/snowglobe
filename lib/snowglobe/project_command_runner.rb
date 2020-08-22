@@ -37,7 +37,11 @@ module Snowglobe
         runner.env["BUNDLE_GEMFILE"] = fs.find_in_project("Gemfile").to_s
 
         runner.around_command do |run_command|
-          Bundler.with_clean_env(&run_command)
+          if Bundler.respond_to?(:with_unbundled_env)
+            Bundler.with_unbundled_env(&run_command)
+          else
+            Bundler.with_clean_env(&run_command)
+          end
         end
 
         yield runner if block_given?
