@@ -77,7 +77,7 @@ module Snowglobe
     private
 
     def root_directory
-      Snowglobe.configuration.temporary_directory
+      Snowglobe.configuration.temporary_directory.join("snowglobe")
     end
 
     def wrap_file(path)

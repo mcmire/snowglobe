@@ -8,7 +8,7 @@ module ProjectHelpers
   end
 
   def project_directory
-    temporary_directory.join(project_name)
+    temporary_directory.join("snowglobe").join(project_name)
   end
 
   def project_name

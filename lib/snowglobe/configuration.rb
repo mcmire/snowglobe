@@ -1,12 +1,16 @@
 module Snowglobe
   class Configuration
-    attr_accessor :temporary_directory
     attr_writer :project_name, :database_name
+    attr_reader :temporary_directory
 
     def initialize
-      self.temporary_directory = Pathname.new(Dir.tmpdir).join("snowglobe")
       @project_name = nil
       @database_name = nil
+      self.temporary_directory = Dir.tmpdir
+    end
+
+    def update!
+      yield self
     end
 
     def project_name
@@ -25,8 +29,8 @@ module Snowglobe
       @database_name || project_name
     end
 
-    def update!
-      yield self
+    def temporary_directory=(path)
+      @temporary_directory = Pathname.new(path)
     end
 
     class NotConfiguredError < StandardError
