@@ -29,15 +29,15 @@ RSpec.describe Snowglobe::RailsApplication, project: true do
         expect(read_yaml("config/database.yml")).to eq({
           "development" => {
             "adapter" => "postgresql",
-            "database" => app_name
+            "database" => project_name
           },
           "test" => {
             "adapter" => "postgresql",
-            "database" => app_name
+            "database" => project_name
           },
           "production" => {
             "adapter" => "postgresql",
-            "database" => app_name
+            "database" => project_name
           }
         })
       end
