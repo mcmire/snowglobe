@@ -41,11 +41,7 @@ module Snowglobe
     end
 
     def install_gems
-      command_runner.run_outside_of_bundle!(
-        "bundle install --local"
-      ) do |runner|
-        runner.retries = 5
-      end
+      command_runner.run_outside_of_bundle!("bundle install --local")
     end
 
     def version_of(gem)

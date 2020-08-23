@@ -26,7 +26,8 @@ RSpec.describe Snowglobe::RSpecProject, project: true do
         end
       TEST
 
-      expect(project.run_rspec_test_suite).to be_success
+      expect(project.run_rspec_test_suite)
+        .to have_run_successfully
     end
   end
 end

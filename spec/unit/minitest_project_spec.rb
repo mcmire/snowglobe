@@ -28,7 +28,8 @@ RSpec.describe Snowglobe::MinitestProject, project: true do
         end
       TEST
 
-      expect(project.run_n_unit_tests("test/example_test.rb")).to be_success
+      expect(project.run_n_unit_tests("test/example_test.rb"))
+        .to have_run_successfully
     end
   end
 end

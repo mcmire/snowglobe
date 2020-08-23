@@ -18,54 +18,59 @@ module Snowglobe
       run("rspec", &block)
     end
 
-    def run_rake_tasks!(*args, **options)
-      run_rake_tasks(*args, **options) do |runner|
-        runner.run_successfully = true
-        yield runner if block_given?
-      end
+    def run_rake_tasks!(*args, **options, &block)
+      run_rake_tasks(
+        *args,
+        **options,
+        run_successfully: true,
+        &block
+      )
     end
 
     def run_rake_tasks(*tasks, **options, &block)
       run("rake", *tasks, "--trace", **options, &block)
     end
 
-    def run!(*args, **options)
-      run(*args, **options) do |runner|
-        runner.run_successfully = true
-        yield runner if block_given?
-      end
+    def run_inside_of_bundle!(*args, **options, &block)
+      run(
+        *args,
+        **options,
+        run_successfully: true,
+        &block
+      )
     end
+    alias_method :run!, :run_inside_of_bundle!
 
-    def run(*args, **options)
-      CommandRunner.run(*args, **options) do |runner|
-        runner.directory = fs.project_directory
-        runner.command_prefix = "bundle exec"
-        runner.env["BUNDLE_GEMFILE"] = fs.find_in_project("Gemfile").to_s
-
-        runner.around_command do |run_command|
+    def run_inside_of_bundle(*args, **options, &block)
+      CommandRunner.run(
+        *args,
+        **options,
+        directory: fs.project_directory,
+        command_prefix: "bundle exec",
+        env: { "BUNDLE_GEMFILE" => fs.find_in_project("Gemfile") },
+        around_command: -> (run_command) do
           if Bundler.respond_to?(:with_unbundled_env)
             Bundler.with_unbundled_env(&run_command)
           else
             Bundler.with_clean_env(&run_command)
           end
-        end
+        end,
+        &block
+      )
+    end
+    alias_method :run, :run_inside_of_bundle
 
-        yield runner if block_given?
-      end
+    def run_outside_of_bundle!(*args, **options, &block)
+      run_outside_of_bundle(*args, **options, run_successfully: true, &block)
     end
 
-    def run_outside_of_bundle!(*args, **options)
-      run_outside_of_bundle(*args, **options) do |runner|
-        runner.run_successfully = true
-        yield runner if block_given?
-      end
-    end
-
-    def run_outside_of_bundle(*args, **options)
-      CommandRunner.run(*args, **options) do |runner|
-        runner.directory = fs.project_directory
-        yield runner if block_given?
-      end
+    def run_outside_of_bundle(*args, **options, &block)
+      CommandRunner.run(
+        *args,
+        **options,
+        directory: fs.project_directory,
+        &block
+      )
     end
 
     private

@@ -2,7 +2,6 @@ PATH
   remote: ..
   specs:
     snowglobe (0.3.0)
-      childprocess
 
 GEM
   remote: https://rubygems.org/

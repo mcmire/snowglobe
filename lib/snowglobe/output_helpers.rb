@@ -3,7 +3,14 @@ module Snowglobe
     module_function
 
     def bookended(text)
-      divider("START") + text + "\n" + divider("END")
+      text_with_newline =
+        if text.end_with?("\n")
+          text
+        else
+          text + "\n"
+        end
+
+      divider("START") + text_with_newline + divider("END")
     end
 
     def divider(title = "")
