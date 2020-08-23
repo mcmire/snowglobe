@@ -19,6 +19,7 @@ module Snowglobe
       :command_runner,
       :run,
       :run!,
+      :run_rspec_tests,
       :run_rspec_test_suite,
       :run_n_unit_tests
     )

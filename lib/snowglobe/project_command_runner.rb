@@ -14,9 +14,10 @@ module Snowglobe
       end
     end
 
-    def run_rspec_test_suite(&block)
+    def run_rspec_tests(&block)
       run("rspec", &block)
     end
+    alias_method :run_rspec_test_suite, :run_rspec_tests
 
     def run_rake_tasks!(*args, **options, &block)
       run_rake_tasks(
