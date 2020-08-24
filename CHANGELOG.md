@@ -1,12 +1,22 @@
 # Changelog
 
-## Unreleased
+## Backward-incompatible changes
 
-* Use `childprocess` to run commands.
-* Skip installing Webpacker when generating Rails 6 applications.
-* Remove Bootsnap from generated Rails 6 applications.
-* Remove outdated Rails < 4.2 modifications.
-* Use cross-platform means of creating a temporary directory.
+* Change `temporary_directory` configuration option to optimize for specifying
+  `tmp` inside of an existing project.
+
+## Features
+
+* Support creating Rails 6 applications. Webpacker and Bootsnap are skipped in
+  this case.
+* Add the ability to create RSpec- and Minitest-centric projects.
+
+## Improvements
+
+* Start testing against Ruby 2.7.
+* Stop supporting Rails 4.2.
+* Improve CommandRunner to capture stdout and stderr separately.
+* Use a cross-platform means of defaulting `temporary_directory`.
 
 ## 0.3.0 - 2019-04-21
 
