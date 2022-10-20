@@ -1,3 +1,5 @@
+require "bundler"
+
 module Snowglobe
   class ProjectCommandRunner
     def initialize(fs)

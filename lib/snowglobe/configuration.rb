@@ -1,3 +1,5 @@
+require "tmpdir"
+
 module Snowglobe
   class Configuration
     attr_writer :project_name, :database_name
