@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gemspec
 
 gem "appraisal"
-gem "bundler", "~> 1.0"
+gem "bundler", "~> 2.4.22"
 gem "pry-byebug"
 gem "rails"
 gem "rake", "~> 10.0"
