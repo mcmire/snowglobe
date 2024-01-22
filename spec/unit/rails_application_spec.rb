@@ -96,7 +96,7 @@ RSpec.describe Snowglobe::RailsApplication, project: true do
         .join(".")
 
       case current_rails_version
-      when "6.0", "5.2", "5.1", "5.0"
+      when "6.1", "6.0", "5.2", "5.1", "5.0"
         it "returns ActiveRecord::Migration[#{current_rails_version}]" do
           expect(project.migration_class_name).to eq(
             "ActiveRecord::Migration[#{current_rails_version}]"

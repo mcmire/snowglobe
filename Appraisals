@@ -55,7 +55,7 @@ end
 appraise "rails_5_2" do
   instance_eval(&shared_dependencies)
 
-  gem "rails", "5.2.4.3"
+  gem "rails", "5.2.8.1"
   gem "rails-controller-testing", ">= 1.0.1"
   gem "puma", "~> 3.11"
   gem "bootsnap", ">= 1.1.0", require: false
@@ -74,7 +74,7 @@ if Gem::Requirement.new(">= 2.5.0").satisfied_by?(Gem::Version.new(RUBY_VERSION)
   appraise "rails_6_0" do
     instance_eval(&shared_dependencies)
 
-    gem "rails", "6.0.3.2"
+    gem "rails", "6.0.6.1"
     gem "puma", "~> 4.1"
     gem "sass-rails", ">= 6"
     gem "webpacker", "~> 4.0"
@@ -92,5 +92,33 @@ if Gem::Requirement.new(">= 2.5.0").satisfied_by?(Gem::Version.new(RUBY_VERSION)
     # Other dependencies
     gem "rails-controller-testing", ">= 1.0.4"
     gem "pg", "~> 1.1", platform: :ruby
+  end
+
+  appraise 'rails_6_1' do
+    instance_eval(&shared_dependencies)
+  
+    gem 'rails', '6.1.7.6'
+    gem "rake", "~> 12.0"
+    gem 'puma', '~> 5.0'
+    gem 'sass-rails', '>= 6'
+    gem 'turbolinks', '~> 5'
+    gem 'jbuilder', '~> 2.7'
+    gem 'bcrypt', '~> 3.1.7'
+    gem 'bootsnap', '>= 1.4.4', require: false
+    gem 'rack-mini-profiler', '~> 2.0.0'
+    gem 'listen', '~> 3.3'
+    gem 'capybara', '>= 3.26'
+    gem 'selenium-webdriver', '>= 4.0.0.rc1'
+    gem 'webdrivers'
+    gem 'net-smtp', require: false
+    gem 'psych', '~> 3.0'
+  
+    # test dependencies
+    gem 'rspec-rails', '~> 6.0'
+    gem 'shoulda-context', '~> 2.0.0'
+  
+    # Database adapters
+    gem 'pg', '>= 0.18', '< 2.0'
+    gem 'sqlite3', '>= 1.6', '< 1.7'
   end
 end
