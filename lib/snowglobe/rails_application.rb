@@ -31,10 +31,6 @@ module Snowglobe
     def generate
       rails_new
 
-      if rails_version >= "5.2"
-        remove_bootsnap
-      end
-
       write_database_configuration
       configure_tests_to_run_in_sorted_order
 
@@ -64,17 +60,8 @@ module Snowglobe
         fs.project_directory,
         "--skip-bundle",
         "--skip-javascript",
+        "--skip-bootsnap",
         "--no-rc"
-      )
-    end
-
-    def remove_bootsnap
-      # Rails 5.2 introduced bootsnap, which is helpful when you're developing
-      # or deploying an app, but we don't really need it (and it messes with
-      # Zeus anyhow)
-      fs.comment_lines_matching_in_file(
-        "config/boot.rb",
-        %r{\Arequire 'bootsnap/setup'}
       )
     end
 
@@ -105,7 +92,6 @@ end
 
     def remove_unwanted_gems
       bundle.updating do
-        bundle.remove_gem "bootsnap"
         bundle.remove_gem "debugger"
         bundle.remove_gem "byebug"
         bundle.add_gem "pry-byebug"
