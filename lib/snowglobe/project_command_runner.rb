@@ -12,7 +12,7 @@ module Snowglobe
 
     def run_n_unit_test_suite
       run_rake_tasks("test") do |runner|
-        runner.env["TESTOPTS"] = "-v"
+        runner.add_env("TESTOPTS" => "-v")
       end
     end
 
