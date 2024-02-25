@@ -21,7 +21,8 @@ module Snowglobe
       :run!,
       :run_rspec_tests,
       :run_rspec_test_suite,
-      :run_n_unit_tests
+      :run_n_unit_tests,
+      :run_n_unit_test_suite
     )
 
     def initialize

@@ -39,6 +39,10 @@ module Snowglobe
       yield self if block_given?
     end
 
+    def add_env(env)
+      @env = env.merge(@env)
+    end
+
     def formatted_command
       [formatted_env, Shellwords.join(command)]
         .reject(&:empty?)
