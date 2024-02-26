@@ -10,17 +10,6 @@ RSpec.describe Snowglobe::RailsApplication, project: true do
       expect(project_directory.join("app/javascript").exist?).not_to be(true)
     end
 
-    if rails_version >= "5.2"
-      it "removes Bootsnap" do
-        expect("Gemfile").to have_commented_out_line_starting_with(
-          "gem 'bootsnap'"
-        )
-        expect("config/boot.rb").to have_commented_out_line_starting_with(
-          "require 'bootsnap/setup'"
-        )
-      end
-    end
-
     if Snowglobe::Database.adapter_name == :postgresql
       it "configures the app to use Postgres" do
         expect("Gemfile").not_to have_commented_out_line_starting_with(

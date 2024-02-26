@@ -55,10 +55,9 @@ end
 appraise "rails_5_2" do
   instance_eval(&shared_dependencies)
 
-  gem "rails", "5.2.4.3"
+  gem "rails", "5.2.8.1"
   gem "rails-controller-testing", ">= 1.0.1"
   gem "puma", "~> 3.11"
-  gem "bootsnap", ">= 1.1.0", require: false
   gem "sass-rails", "~> 5.0"
   gem "turbolinks", "~> 5"
   gem "jbuilder", "~> 2.5"
@@ -73,14 +72,13 @@ end
 appraise "rails_6_0" do
   instance_eval(&shared_dependencies)
 
-  gem "rails", "6.0.3.2"
+  gem "rails", "6.0.6.1"
   gem "puma", "~> 4.1"
   gem "sass-rails", ">= 6"
   gem "webpacker", "~> 4.0"
   gem "turbolinks", "~> 5"
   gem "jbuilder", "~> 2.7"
   gem "bcrypt", "~> 3.1.7"
-  gem "bootsnap", ">= 1.4.2", require: false
   gem "listen", ">= 3.0.5", "< 3.2"
   gem "spring-watcher-listen", "~> 2.0.0"
   gem "capybara", ">= 2.15"

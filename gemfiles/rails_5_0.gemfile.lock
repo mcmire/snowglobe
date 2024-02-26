@@ -215,7 +215,7 @@ PLATFORMS
 DEPENDENCIES
   appraisal
   bcrypt (~> 3.1.7)
-  bundler (~> 1.0)
+  bundler (~> 2.4.22)
   jbuilder (~> 2.5)
   jquery-rails
   listen (~> 3.0.5)
@@ -237,4 +237,4 @@ DEPENDENCIES
   turbolinks (~> 5)
 
 BUNDLED WITH
-   1.17.3
+   2.4.22
